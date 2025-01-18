@@ -1,0 +1,56 @@
+﻿@page "/Tecnicos/Edit/{TecnicosId:int}"
+@inject TecnicosService tecnicosService
+@rendermode InteractiveServer 
+
+
+<h3>TecnicosEdit</h3>
+
+@code {
+    [Parameter]
+    public int TecnicosId { get; set; }
+
+    public Tecnicos? Tecnico { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Tecnico = await tecnicosService.Buscar(TecnicosId);
+    }
+
+    public async Task Buscar()
+    {
+        var encontrado = await tecnicosService.Buscar(Tecnico.TecnicoId);
+        if (encontrado != null)
+            Tecnico = encontrado;
+    }
+
+    public void Nuevo()
+    {
+        this.Tecnico = new Tecnicos();
+    }
+
+    public async Task Guardar()
+    {
+        if (await Validar())
+        {
+            return;
+
+        }
+        var guardo = tecnicosService.Guardar(this.Tecnico);
+    }
+
+    public async Task<bool> Validar()
+    {
+        var isNombreAvailable = await tecnicosService.TecnicoNombreExist(Tecnico.Nombres);
+        if (isNombreAvailable)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public async Task Eliminar()
+    {
+        
+    }
+}

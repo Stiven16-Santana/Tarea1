@@ -1,10 +1,21 @@
 using Tarea1.Components;
+using Tarea1.DAL;
+using Microsoft.EntityFrameworkCore;
+using Tarea1.Models;
+using Tarea1.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var ConStr = builder.Configuration.GetConnectionString("SqlConStr");
+builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(ConStr));
+
+//Inyeccion del Service
+builder.Services.AddScoped<TecnicosService>();
 
 var app = builder.Build();
 

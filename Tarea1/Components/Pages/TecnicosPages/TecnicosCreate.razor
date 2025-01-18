@@ -1,0 +1,79 @@
+﻿@page "/Tecnicos/Create"
+@inject TecnicosService tecnicosService 
+@rendermode InteractiveServer 
+
+@*HTML*@
+<PageTitle>Create</PageTitle>
+<EditForm Model= "Tecnico" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="Container"
+        <div class="card shadow-lg"
+            <div class="card-header text-center bg-primary text-white"
+                <h5 class="card-title "> Registro de Tecnicos </h5>
+            </div>
+
+            <div class="card-body ">
+
+                @* TecnicoId*@
+                <div class="mb-3">
+                    <label class="form-label"><strong>TecnicoId</strong></label>
+                    <InputNumber disabled class="form-control" @bind-Value="Tecnico.TecnicoId" reandoly></InputNumber>
+                </div>
+                @*Nombres*@
+                <div class="mb-3">
+                    <label class="form-label"><strong>Nombres</strong></label>
+                    <InputText class="form-control" @bind-Value="Tecnico.Nombres"></InputText>
+                    <span class="text text-danger">@message</span>
+                    <ValidationMessage For="(() => Tecnico.Nombres)" />
+                </div>
+                @*Sueldo por hora*@
+                <div class="mb-3">
+                    <label class="form-check-label"><strong>Sueldo por hora</strong></label>
+                    <InputNumber class="form-control" @bind-Value="Tecnico.SueldoHora"></InputNumber>
+                    <ValidationMessage For="(() => Tecnico.SueldoHora)" />
+                </div>
+            </div>
+
+            @*footer*@
+            <div class="card-footer text-center nt-2">
+                <button type="button" @onclick="Nuevo" class="btn btn-outline-primary">Nuevo</button>
+                <button type="submit" class="btn btn-outline-success"> Guardar</button>
+                <a href="/Tecnicos/Index" class="btn btn-outline-danger"> <span class="bi bi-arrow-left" ></span> Retroceder </a>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public Tecnicos Tecnico { get; set; } = new Tecnicos();
+    public string message = string.Empty;
+
+    public void Nuevo()
+    {
+        this.Tecnico = new Tecnicos();
+        message = string.Empty;
+    }
+
+    public async Task Guardar()
+    {
+        if (await Validar())
+        {
+            return;
+
+        }
+        var guardo = await tecnicosService.Guardar(this.Tecnico);
+    }
+
+    public async Task<bool> Validar()
+    {
+        var isNombreAvailable = await tecnicosService.TecnicoNombreExist(Tecnico.Nombres);
+        if (isNombreAvailable)
+        {
+            return false;
+        }
+        message = "Nombre ya existe";
+        return true;
+    }
+
+}
