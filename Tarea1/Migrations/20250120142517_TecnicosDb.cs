@@ -5,7 +5,7 @@
 namespace Tarea1.Migrations
 {
     /// <inheritdoc />
-    public partial class inicial : Migration
+    public partial class TecnicosDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

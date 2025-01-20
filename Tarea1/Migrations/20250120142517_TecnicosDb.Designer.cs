@@ -11,8 +11,8 @@ using Tarea1.DAL;
 namespace Tarea1.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20250116211725_inicial")]
-    partial class inicial
+    [Migration("20250120142517_TecnicosDb")]
+    partial class TecnicosDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
