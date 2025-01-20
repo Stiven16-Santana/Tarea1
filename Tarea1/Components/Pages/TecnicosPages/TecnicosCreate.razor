@@ -1,10 +1,11 @@
 ﻿@page "/Tecnicos/Create"
-@inject TecnicosService tecnicosService 
+@page "/Tecnicos/Create/{TecnicosId:int}"
+@inject TecnicosService tecnicosService
 @rendermode InteractiveServer 
 
 @*HTML*@
 <PageTitle>Create</PageTitle>
-<EditForm Model= "Tecnico" OnValidSubmit="Guardar">
+<EditForm Model="Tecnico" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
 
     <div class="Container"
@@ -39,7 +40,7 @@
             <div class="card-footer text-center nt-2">
                 <button type="button" @onclick="Nuevo" class="btn btn-outline-primary">Nuevo</button>
                 <button type="submit" class="btn btn-outline-success"> Guardar</button>
-                <a href="/Tecnicos/Index" class="btn btn-outline-danger"> <span class="bi bi-arrow-left" ></span> Retroceder </a>
+                <a href="/Tecnicos/Index" class="btn btn-outline-danger"> <span class="bi bi-arrow-left"></span> Retroceder </a>
             </div>
         </div>
     </div>
@@ -49,6 +50,19 @@
     public Tecnicos Tecnico { get; set; } = new Tecnicos();
     public string message = string.Empty;
 
+    [Parameter]
+    public int TecnicosId { get; set; } = 0;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (TecnicosId > 0)
+        {
+            Tecnico = await tecnicosService.Buscar(TecnicosId);
+        }
+        await base.OnInitializedAsync();
+    }
+
     public void Nuevo()
     {
         this.Tecnico = new Tecnicos();
@@ -57,12 +71,16 @@
 
     public async Task Guardar()
     {
-        if (await Validar())
+        if (!(await Validar()))
         {
             return;
-
         }
-        var guardo = await tecnicosService.Guardar(this.Tecnico);
+
+        var guardo = await tecnicosService.Guardar(Tecnico);
+        if (guardo)
+        {
+            Nuevo();
+        }
     }
 
     public async Task<bool> Validar()
@@ -70,10 +88,11 @@
         var isNombreAvailable = await tecnicosService.TecnicoNombreExist(Tecnico.Nombres);
         if (isNombreAvailable)
         {
+            message = "Nombre ya existe";
             return false;
         }
-        message = "Nombre ya existe";
+
+        message = string.Empty;
         return true;
     }
-
 }

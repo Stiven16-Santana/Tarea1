@@ -1,4 +1,4 @@
-﻿@page "/Tecnicos/Index";
+﻿@page "/Tecnicos/Index"
 
 @inject TecnicosService tecnicoService
 @inject NavigationManager Navigation
@@ -60,15 +60,15 @@
 						</tr>
 					</thead>
 					<tbody>
-						@foreach (var tecnico in Tecnicos)
+						@foreach (var item in Tecnicos)
 						{
 							<tr>
-								<td>@tecnico.TecnicoId</td>
-								<td>@tecnico.Nombres</td>
-								<td>@tecnico.SueldoHora.ToString("N0")</td>
-								<td><button trype="button" class="btn btn-outline-warning bi bi-pencil-square" @onclick="()=> MostrarPantallaEditar(tecnico.TecnicoId)"></button></td>
-								<td><button type="button" class="btn btn-outline-info bi bi-eye-fill" @onclick="()=> MostrarPantallaDetalle(tecnico.TecnicoId)"></button></td>
-								<td><button type="button" class="btn btn-outline-danger bi bi-trash2" @onclick="()=> MostrarPantallaEliminar(tecnico.TecnicoId)"></button></td>
+								<td>@item.TecnicoId</td>
+								<td>@item.Nombres</td>
+								<td>@item.SueldoHora.ToString("N2")</td>
+								<td><a class="btn btn-outline-warning bi bi-pencil-square" href="/Tecnicos/Edit/@item.TecnicoId"></a></td>
+								<td><a class="btn btn-outline-info bi bi-eye-fill" href="/Tecnicos/Create/@item.TecnicoId"></a></td>
+								<td><button type="button" class="btn btn-outline-danger bi bi-trash2" @onclick="()=> Eliminar(item.TecnicoId)"></button></td>
 							</tr>
 						}
 					</tbody>
@@ -86,11 +86,6 @@
 	public List<Tecnicos> Tecnicos { get; set; } = new List<Tecnicos>();
 	private string filtro = "";
 	private string valorFiltro = "";
-
-	protected override async Task OnInitializedAsync()
-	{
-		Tecnicos = await tecnicoService.Listar(t => true);
-	}
 
 	private async Task Buscar()
 	{
@@ -111,6 +106,16 @@
 		}
 	}
 
+	public async Task Eliminar(int id)
+	{
+		var eliminado = await tecnicoService.Eliminar(id);
+		if (eliminado)
+		{
+			await Buscar();
+		}
+		
+	}
+
 	public async Task Restablecer()
 	{
 		Tecnicos = await tecnicoService.Listar(t => true);
@@ -122,16 +127,14 @@
 	{
 		Navigation.NavigateTo("/Tecnicos/Create");
 	}
+
 	public void MostrarPantallaEditar(int id)
 	{
 		Navigation.NavigateTo($"/Tecnico/Edit/{id}");
 	}
+
 	public void MostrarPantallaDetalle(int id)
 	{
-		Navigation.NavigateTo($"/Tecnico/Details/{id}");
-	}
-	public void MostrarPantallaEliminar(int id)
-	{
-		Navigation.NavigateTo($"/Tecnico/Delete/{id}");
+		Navigation.NavigateTo($"/Tecnico/Create/{id}");
 	}
 }
