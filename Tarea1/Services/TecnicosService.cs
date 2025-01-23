@@ -70,13 +70,13 @@ namespace Tarea1.Services
                 .AsNoTracking()
                 .ToListAsync();
         }
+
         public async Task<bool> TecnicoNombreExist(string Nombre)
         {
             await using var contexto = await DbFactory.CreateDbContextAsync();
-            var isNombreAvailable = !await contexto.Tecnicos
+            return await contexto.Tecnicos
                 .Where(t => t.Nombres == Nombre)
                 .AnyAsync();
-            return isNombreAvailable;
         }
     }
 }
