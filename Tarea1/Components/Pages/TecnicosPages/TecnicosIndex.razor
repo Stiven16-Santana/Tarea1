@@ -55,7 +55,6 @@
 							<th>Nombre</th>
 							<th>SueldoHora</th>
 							<th>Editar</th>
-							<th>Detalle</th>
 							<th>Eliminar</th>
 						</tr>
 					</thead>
@@ -67,7 +66,6 @@
 								<td>@item.Nombres</td>
 								<td>@item.SueldoHora.ToString("N2")</td>
 								<td><a class="btn btn-outline-warning bi bi-pencil-square" href="/Tecnicos/Edit/@item.TecnicoId"></a></td>
-								<td><a class="btn btn-outline-info bi bi-eye-fill" href="/Tecnicos/Create/@item.TecnicoId"></a></td>
 								<td><button type="button" class="btn btn-outline-danger bi bi-trash2" @onclick="()=> Eliminar(item.TecnicoId)"></button></td>
 							</tr>
 						}
