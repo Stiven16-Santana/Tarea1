@@ -1,0 +1,150 @@
+﻿@page "/Clientes/Index"
+
+@inject ClientesService clientesService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+
+<div class="card">
+	<div class="shadow-lg">
+		@*Header*@
+		<div class="card-header text-center">
+			<h2><strong>Consulta de Clientes</strong></h2>
+		</div>
+		@*Body*@
+		<div class="card-body">
+			@*Labels*@
+			<div class="row">
+				<div class="col-3">
+					<label class="form-label" for="Filtro"><strong>Filtrar por</strong></label>
+				</div>
+				<div class="col-4">
+					<label class="form-label" for="ValorFiltro"><strong>B&uacute;squeda</strong></label>
+				</div>
+			</div>
+			@*Inputs y Buttons*@
+			<div class="row">
+				@*Filtro*@
+				<div class="col-3">
+					<InputSelect class="form-select" @bind-Value="filtro">
+						<option value="" disabled>Elija una opción</option>
+						<option value="id"><strong>ID</strong></option>
+						<option value="nombres"><strong>Nombres</strong></option>
+					</InputSelect>
+				</div>
+				@*Búsqueda*@
+				<div class="col-4">
+					<div class="input-group">
+						<input class="form-control" @bind="valorFiltro" placeholder="Buscar" />
+						<button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+					</div>
+				</div>
+				<div class="col-auto">
+					<button type="button" class="btn btn-outline-secondary bi bi-arrow-counterclockwise" @onclick="Restablecer"> Restablecer</button>
+				</div>
+				<div class="col text-end">
+					<button type="button" class="btn btn-outline-primary ms-2" @onclick="MostrarPantallaCrear">Crear</button>
+				</div>
+			</div>
+			@*Tabla*@
+			<div class="text-center mt-3">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>ClienteId</th>
+							<th>FechaIngreso</th>
+							<th>Nombre</th>
+							<th>Direccion</th>
+							<th>RNC</th>
+							<th>LimitesCredito</th>
+							<th>Tecnico</th>
+							<th>Editar</th>
+							<th>Eliminar</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var item in Clientes)
+						{
+							<tr>
+								<td>@item.ClienteId</td>
+								<td>@item.FechaIngreso</td>
+								<td>@item.Nombres</td>
+								<td>@item.Direccion</td>
+								<td>@item.RNC</td>
+								<td>@item.LimiteCredito.ToString("N2")</td>
+								<td>@item.Tecnico.Nombres</td>
+								<td><a class="btn btn-outline-warning bi bi-pencil-square" href="/Clientes/Edit/@item.ClienteId"></a></td>
+								<td><button type="button" class="btn btn-outline-danger bi bi-trash2" @onclick="()=> Eliminar(item.ClienteId)"></button></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		@*footer*@
+		<div class="card-footer">
+			<p><strong>Total de Clientes: @Clientes.Count</strong></p>
+		</div>
+	</div>
+</div>
+
+
+
+@code {
+	public List<Clientes> Clientes { get; set; } = new List<Clientes>();
+	private string filtro = "";
+	private string valorFiltro = "";
+
+	private async Task Buscar()
+	{
+		if (valorFiltro.Trim() != "")
+		{
+			if (filtro == "id" && int.TryParse(valorFiltro, out int ClienteId))
+		{
+				Clientes = await clientesService.Listar(p => p.ClienteId == ClienteId);
+			}
+			else if (filtro == "nombres")
+			{
+				Clientes = await clientesService.Listar(c => c.Nombres.ToLower().Contains(valorFiltro.ToLower()));
+			}
+		}
+		else
+		{
+			Clientes = await clientesService.Listar(c => true);
+		}
+	}
+
+	public async Task Eliminar(int id)
+	{
+		var eliminado = await clientesService.Eliminar(id);
+		if (eliminado)
+		{
+			await Buscar();
+		}
+
+	}
+
+	public async Task Restablecer()
+	{
+		Clientes = await clientesService.Listar(c => true);
+		filtro = string.Empty;
+		valorFiltro = string.Empty;
+	}
+
+	public void MostrarPantallaCrear()
+	{
+		Navigation.NavigateTo("/Clientes/Create");
+	}
+
+	public void MostrarPantallaEditar(int id)
+	{
+		Navigation.NavigateTo($"/Clientes/Edit/{id}");
+	}
+
+	public void MostrarPantallaDetalle(int id)
+	{
+		Navigation.NavigateTo($"/Clientes/Create/{id}");
+	}
+
+
+}
