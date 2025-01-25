@@ -1,7 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
-using Microsoft.IdentityModel.Tokens;
-using System.Linq;
 using System.Linq.Expressions;
 using Tarea1.DAL;
 using Tarea1.Models;
