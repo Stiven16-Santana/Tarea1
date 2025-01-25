@@ -11,6 +11,8 @@ namespace Tarea1.DAL
 
         public DbSet<Tecnicos> Tecnicos { get; set; }
 
+        public DbSet<Clientes> Clientes { get; set; }
+
 
     }
 }
