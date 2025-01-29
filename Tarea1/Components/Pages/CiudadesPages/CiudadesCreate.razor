@@ -1,0 +1,116 @@
+﻿@page "/Ciudades/Create"
+
+
+@inject CiudadesServices CiudadesService
+
+@rendermode InteractiveServer
+
+
+
+@*HTML*@
+<PageTitle>Create</PageTitle>
+<EditForm Model="Ciudades" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class=" card shadow-lg">
+            <div class="card-header text-center bg-primary text-white">
+                <h5 class="card-title"> Registro de Ciudad </h5>
+            </div>
+
+            <div class="card-body ">
+
+                @* CiudadId *@
+                <div class="mb-3">                                  
+                    <label class ="form-label"><strong>CiudadId</strong></label>
+                    <InputNumber class ="form-control" @bind-Value="Ciudad.CiudadId" disabled/>
+                </div>   
+
+                @* Ciudad *@
+                <div class="mb-3">                                  
+                    <label class ="form-label"><strong>Ciudad</strong></label>
+                    <InputText class ="form-control" @bind-Value="Ciudad.Ciudad"/>
+                </div>   
+
+                @*footer*@
+                <div class="card-footer text-center nt-2">
+                    <button type="button" @onclick="Nuevo" class="btn btn-outline-primary">Nuevo</button>
+                    <button type="submit" class="btn btn-outline-success"> Guardar</button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</EditForm>
+
+
+
+
+
+@code {
+
+    public Ciudades Ciudad { get; set; } = new Ciudades();
+    public List<Ciudades> Ciudades { get; set; } = new();
+    public string message = string.Empty;
+
+
+
+    [Parameter]
+    public int CiudadId { get; set; } = 0;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Nuevo();
+
+        if (CiudadId > 0)
+        {
+            Ciudad = await CiudadesService.Buscar(CiudadId);
+        }
+        await base.OnInitializedAsync();
+    }
+
+    public void Nuevo()
+    {
+        this.Ciudad = new();
+        message = string.Empty;
+
+    }
+
+    public async Task Guardar()
+    {
+        if (!(await Validar()))
+        {
+            return;
+        }
+
+        var guardo = await CiudadesService.Guardar(Ciudad);
+        if (guardo)
+        {
+            Nuevo();
+        }
+    }
+
+    public async Task<bool> Validar()
+    {
+        bool esValido = true;
+        var isCiudadAvailable = await CiudadesService.CiudadExist(Ciudad.Ciudad);
+        if (isCiudadAvailable)
+        {
+            message = "Ciudad ya existe";
+            esValido = false;
+        }
+
+        return esValido;
+    }
+
+}
+
+
+
+
+
