@@ -1,7 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Tarea1.Components;
 using Tarea1.DAL;
-using Microsoft.EntityFrameworkCore;
-using Tarea1.Models;
 using Tarea1.Services;
 
 
@@ -17,6 +16,8 @@ builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(ConStr));
 //Inyeccion del Service
 builder.Services.AddScoped<TecnicosService>();
 builder.Services.AddScoped<ClientesService>();
+builder.Services.AddScoped<CiudadesServices>();
+
 
 var app = builder.Build();
 
