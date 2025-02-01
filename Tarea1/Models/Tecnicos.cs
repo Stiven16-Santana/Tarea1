@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tarea1.Models;
 
@@ -15,5 +16,7 @@ public class Tecnicos
 
     [Required(ErrorMessage = "El sueldo por hora es requerido.")]
     [Range(0, 2000000000, ErrorMessage = "El sueldo debe ser un valor positivo.")]
-    public decimal SueldoHora {get; set;}
+    public decimal SueldoHora { get; set; }
+
+   public List<Tickets> Tickets { get; set; }
 }

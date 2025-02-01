@@ -7,7 +7,7 @@
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
+    <NavLink class="nav flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
@@ -26,6 +26,12 @@
             </NavLink>
         </div>
 
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/Ticket/Create">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Registo Tickets
+            </NavLink>
+        </div>
+
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/Tecnicos/Index">
@@ -38,6 +44,14 @@
                 <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Consulta Clientes
             </NavLink>
         </div>
-    </nav>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/Ticket/Index">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Consulta Tickets
+            </NavLink>
+        </div>
+
+     </NavLink>
+
 </div>
 

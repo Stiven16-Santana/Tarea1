@@ -12,7 +12,7 @@ using Tarea1.DAL;
 namespace Tarea1.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20250125202750_TecnicosDb")]
+    [Migration("20250201145624_TecnicosDb")]
     partial class TecnicosDb
     {
         /// <inheritdoc />
@@ -84,15 +84,87 @@ namespace Tarea1.Migrations
                     b.ToTable("Tecnicos");
                 });
 
+            modelBuilder.Entity("Tarea1.Models.Tickets", b =>
+                {
+                    b.Property<int>("TicketId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketId"));
+
+                    b.Property<string>("Asunto")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Prioridad")
+                        .HasMaxLength(100)
+                        .HasColumnType("int");
+
+                    b.Property<int>("TecnicoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Tiempo")
+                        .HasColumnType("int");
+
+                    b.HasKey("TicketId");
+
+                    b.HasIndex("ClienteId");
+
+                    b.HasIndex("TecnicoId");
+
+                    b.ToTable("Tickets");
+                });
+
             modelBuilder.Entity("Tarea1.Models.Clientes", b =>
                 {
-                    b.HasOne("Tarea1.Models.Tecnicos", "tecnico")
+                    b.HasOne("Tarea1.Models.Tecnicos", "Tecnico")
                         .WithMany()
                         .HasForeignKey("TecnicoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("tecnico");
+                    b.Navigation("Tecnico");
+                });
+
+            modelBuilder.Entity("Tarea1.Models.Tickets", b =>
+                {
+                    b.HasOne("Tarea1.Models.Clientes", "cliente")
+                        .WithMany("Tickets")
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tarea1.Models.Tecnicos", "Tecnico")
+                        .WithMany("Tickets")
+                        .HasForeignKey("TecnicoId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.Navigation("Tecnico");
+
+                    b.Navigation("cliente");
+                });
+
+            modelBuilder.Entity("Tarea1.Models.Clientes", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("Tarea1.Models.Tecnicos", b =>
+                {
+                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }
