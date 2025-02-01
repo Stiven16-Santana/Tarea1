@@ -1,0 +1,175 @@
+﻿@page "/Ticket/Create"
+@page "/Ticket/Create/{TicketId:int}"
+
+@inject TicketsService TicketService
+@inject TecnicosService TecnicosService
+@inject ClientesService ClientesService
+
+@rendermode InteractiveServer
+
+@*HTML*@
+<PageTitle>Create</PageTitle>
+<EditForm Model="Ticket" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class=" card shadow-lg">
+            <div class="card-header text-center bg-primary text-white">
+                <h5 class="card-title"> Registro de Tickets </h5>
+            </div>
+
+            <div class="card-body ">
+
+                @*TicketId*@
+                <div class="mb-3">
+                    <label class="form-label"><strong>TicketId</strong></label>
+                    <InputNumber class="form-control" @bind-Value="Ticket.TicketId" disabled />
+                </div>
+
+
+                @*Fecha*@
+                <div class="mb-3">
+                    <label for="Fecha"><strong>Fecha</strong></label>
+                    <InputDate id="fecha" class="form-control" @bind-Value="Ticket.Fecha" />
+                    <ValidationMessage For="(() => Ticket.Fecha)" />
+                </div>
+
+                @*Prioridad*@
+                <div class="mb-3">
+                    <label class="form-label"><strong>Prioridad</strong></label>
+                    <select class="form-select" @bind="Ticket.Prioridad">
+                        <option value="@((int)Prioridad.Minima)">@Prioridad.Minima</option>
+                        <option value="@((int)Prioridad.Baja)">@Prioridad.Baja</option>
+                        <option value="@((int)Prioridad.Media)">@Prioridad.Media</option>
+                        <option value="@((int)Prioridad.Alta)">@Prioridad.Alta</option>
+                        <option value="@((int)Prioridad.Urgente)">@Prioridad.Urgente</option>
+                    </select>
+                </div>
+
+
+
+                @*ClienteId*@
+                <div class="mb-3">
+                    <label for="Cliente"><strong>Clientes</strong></label>
+                    <select class="form-select" @bind="Ticket.ClienteId">
+                        <option value="0">- Selecciona al cliente -</option>
+
+                        @foreach (var item in Clientes)
+                        {
+                            <option value="@item.ClienteId">@item.Nombres</option>
+                        }
+                    </select>
+                </div>
+
+                @*Asunto*@
+                <div class="mb-3">
+                    <label for="rnc"><strong>Asunto</strong></label>
+                    <InputText class="form-control" @bind-Value="Ticket.Asunto" />
+
+                </div>
+
+                @*Descripcion*@
+                <div class="mb-3">
+                    <label for="Descripcion"><strong>Descripcion</strong></label>
+                    <InputText class="form-control" @bind-Value="Ticket.Descripcion" />
+                </div>
+                @* 
+                @*TiempoInvertido*@
+                <div class="mb-3">
+                    <label for="TiempoInvertido"><strong>Tiempo Invertido</strong></label>
+                    <InputNumber class="form-control" @bind-Value="Ticket.Tiempo" />
+                </div> 
+
+                @*TecnicoId*@
+                <div class="mb-3">
+                    <label for="Tecnico"><strong>Técnicos</strong></label>
+                    <select class="form-select" @bind="Ticket.TecnicoId">
+                        <option value="0">- Selecciona al tecnico -</option>
+
+                        @foreach (var item in Tecnicos)
+                        {
+                            <option value="@item.TecnicoId">@item.Nombres</option>
+                        }
+                    </select>
+
+                </div>
+
+                @*footer*@
+                <div class="card-footer text-center nt-2">
+                    <button type="button" @onclick="Nuevo" class="btn btn-outline-primary">Nuevo</button>
+                    <button type="submit" class="btn btn-outline-success"> Guardar</button>
+                    <a href="/Ticket/Index" class="btn btn-outline-danger"> <span class="bi bi-arrow-left"></span> Retroceder </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int TicketId { get; set; }
+    public string message = string.Empty;
+
+    private Tickets Ticket { get; set; } = new();
+    private List<Tecnicos> Tecnicos { get; set; } = new();
+    private List<Clientes> Clientes { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Clientes = await ClientesService.Listar(t => true);
+        Tecnicos = await TecnicosService.Listar(t => true);
+        Nuevo();
+
+        await base.OnInitializedAsync();
+    }
+
+    private void Nuevo()
+    {
+        Ticket = new()
+        {
+            Fecha = DateTime.Now
+        };
+    }
+
+    private async Task Guardar()
+    {
+        try
+        {
+
+            if (!(await Validar()))
+            {
+                return;
+            }
+
+            var resultado = await TicketService.Guardar(Ticket); // Llamamos al servicio para guardar el ticket
+
+            if (resultado)
+            {
+                message = "Guardado con éxito";
+                Nuevo(); //Limpia el formulario despues de guardar
+            }
+            else
+            {
+                message = "Error al guardar el tickets.";
+            }
+        }
+        catch (Exception ex)
+        {
+            message = $"Error: {ex.Message}";
+            Console.WriteLine($"Error al guardar el ticket: {ex}");
+        }
+    }
+
+    private async Task<bool> Validar()
+    {
+        var esValido = true;
+
+        if (Ticket.ClienteId == 0)
+        {
+            message = "Debe seleccionar un cliente.";
+            esValido = false;
+        }
+
+        return esValido;
+    }
+}
