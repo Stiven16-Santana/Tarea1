@@ -17,6 +17,7 @@ builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(ConStr));
 //Inyeccion del Service
 builder.Services.AddScoped<TecnicosService>();
 builder.Services.AddScoped<ClientesService>();
+builder.Services.AddScoped<TicketsService>();
 
 var app = builder.Build();
 
@@ -38,3 +39,6 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+
+builder.Services.AddServerSideBlazor()
+    .AddCircuitOptions(options => { options.DetailedErrors = true; }); //
