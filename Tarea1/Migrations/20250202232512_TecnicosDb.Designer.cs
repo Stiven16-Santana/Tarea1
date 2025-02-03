@@ -12,7 +12,7 @@ using Tarea1.DAL;
 namespace Tarea1.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20250201145624_TecnicosDb")]
+    [Migration("20250202232512_TecnicosDb")]
     partial class TecnicosDb
     {
         /// <inheritdoc />
@@ -109,7 +109,6 @@ namespace Tarea1.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Prioridad")
-                        .HasMaxLength(100)
                         .HasColumnType("int");
 
                     b.Property<int>("TecnicoId")

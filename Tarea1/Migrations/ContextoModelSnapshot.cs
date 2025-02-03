@@ -106,7 +106,6 @@ namespace Tarea1.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Prioridad")
-                        .HasMaxLength(100)
                         .HasColumnType("int");
 
                     b.Property<int>("TecnicoId")
