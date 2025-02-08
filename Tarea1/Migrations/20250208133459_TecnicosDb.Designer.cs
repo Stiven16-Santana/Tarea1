@@ -12,7 +12,7 @@ using Tarea1.DAL;
 namespace Tarea1.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20250202232512_TecnicosDb")]
+    [Migration("20250208133459_TecnicosDb")]
     partial class TecnicosDb
     {
         /// <inheritdoc />
@@ -24,6 +24,24 @@ namespace Tarea1.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Tarea1.Models.Ciudades", b =>
+                {
+                    b.Property<int>("CiudadId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CiudadId"));
+
+                    b.Property<string>("Ciudad")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("CiudadId");
+
+                    b.ToTable("Ciudades");
+                });
 
             modelBuilder.Entity("Tarea1.Models.Clientes", b =>
                 {
