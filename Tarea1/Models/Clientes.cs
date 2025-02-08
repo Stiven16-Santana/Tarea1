@@ -32,7 +32,6 @@ public class Clientes
     [ForeignKey("TecnicoId")]
     public Tecnicos Tecnico { get; set; }
 
-
-
-
+    //Relacion con Tickets (uno a muchos)
+    public List<Tickets> Tickets { get; set; } = new List<Tickets>();
 }
