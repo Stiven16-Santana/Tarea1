@@ -60,6 +60,27 @@ namespace Tarea1.Migrations
                     b.ToTable("Clientes");
                 });
 
+            modelBuilder.Entity("Tarea1.Models.Sistemas", b =>
+                {
+                    b.Property<int>("SistemaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SistemaId"));
+
+                    b.Property<string>("Complejidad")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SistemaId");
+
+                    b.ToTable("Sistemas");
+                });
+
             modelBuilder.Entity("Tarea1.Models.Tecnicos", b =>
                 {
                     b.Property<int>("TecnicoId")
