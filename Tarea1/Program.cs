@@ -3,6 +3,7 @@ using Tarea1.DAL;
 using Microsoft.EntityFrameworkCore;
 using Tarea1.Models;
 using Tarea1.Services;
+using Microsoft.AspNetCore.Routing.Constraints;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,10 @@ builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(ConStr));
 builder.Services.AddScoped<TecnicosService>();
 builder.Services.AddScoped<ClientesService>();
 builder.Services.AddScoped<TicketsService>();
+builder.Services.AddScoped<SistemasService>();
+
+
+
 
 var app = builder.Build();
 
