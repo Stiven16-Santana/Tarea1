@@ -1,0 +1,77 @@
+﻿@page "/Sistema/Edit/{SistemaId:int}"
+@inject SistemasService sistemasService
+@inject NavigationManager Navigation
+
+<PageTitle>Editar Sistema</PageTitle>
+
+<EditForm Model="@sistema" OnValidSubmit="GuardarSistema" FormName="EditFormSistema">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="Descripcion">Descripción</label>
+        <InputText id="Descripcion" class="form-control" @bind-Value="sistema.Descripcion" />
+        <ValidationMessage For="@(() => sistema.Descripcion)" />
+    </div>
+
+    <div class="form-group">
+        <label for="Complejidad">Complejidad</label>
+        <InputSelect id="Complejidad" class="form-select" @bind-Value="sistema.Complejidad">
+            <option value="" disabled>Selecciona Complejidad</option>
+            <option value="Baja">Baja</option>
+            <option value="Media">Media</option>
+            <option value="Alta">Alta</option>
+        </InputSelect>
+        <ValidationMessage For="@(() => sistema.Complejidad)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</EditForm>
+
+@code {
+    [Parameter] public int SistemaId { get; set; }
+    private Sistemas sistema = new Sistemas();
+    private bool isLoading = false; // Para mostrar si la solicitud está en progreso
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Cargar el sistema a editar
+        sistema = await sistemasService.Buscar(SistemaId);
+        if (sistema == null)
+        {
+            // Si no se encuentra el sistema con el id proporcionado
+            Navigation.NavigateTo("/Sistema/Index");
+        }
+    }
+
+    private async Task GuardarSistema()
+    {
+        try
+        {
+            isLoading = true;  // Habilitar indicador de carga
+
+            bool resultado = await sistemasService.Guardar(sistema);
+            if (resultado)
+            {
+                // Redirigir a la lista de sistemas si se guarda correctamente
+                Navigation.NavigateTo("/Sistema/Index", true); // true fuerza la recarga
+            }
+            else
+            {
+                // Manejo de error si no se guarda
+                Console.WriteLine("Error al guardar el sistema.");
+                // Puedes agregar un mensaje visual al usuario aquí
+            }
+        }
+        catch (Exception ex)
+        {
+            // Captura de errores
+            Console.WriteLine($"Error al intentar guardar el sistema: {ex.Message}");
+            // Puedes agregar un mensaje de error para el usuario
+        }
+        finally
+        {
+            isLoading = false; // Deshabilitar indicador de carga
+        }
+    }
+}

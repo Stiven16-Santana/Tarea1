@@ -1,0 +1,156 @@
+﻿@page "/Sistema/Index"
+
+@inject SistemasService sistemasService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Consulta de Sistemas</PageTitle>
+
+<div class="card">
+    <div class="shadow-lg">
+        @*Header*@ 
+        <div class="card-header text-center">
+            <h2><strong>Consulta de Sistemas</strong></h2>
+        </div>
+
+        @*Body*@ 
+        <div class="card-body">
+            @*Labels*@ 
+            <div class="row">
+                <div class="col-3">
+                    <label class="form-label"><strong>Filtrar por</strong></label>
+                </div>
+                <div class="col-4">
+                    <label class="form-label"><strong>Búsqueda</strong></label>
+                </div>
+            </div>
+
+            @*Inputs y Buttons*@ 
+            <div class="row">
+                @*Filtro*@
+                <div class="col-3">
+                    <InputSelect class="form-select" @bind-Value="filtro">
+                        <option value="" disabled>Elija una opción</option>
+                        <option value="id"><strong>ID</strong></option>
+                        <option value="descripcion"><strong>Descripción</strong></option>
+                    </InputSelect>
+                </div>
+
+                @*Búsqueda*@ 
+                <div class="col-4">
+                    <div class="input-group">
+                        <input class="form-control" @bind="valorFiltro" placeholder="Buscar" />
+                        <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                    </div>
+                </div>
+
+                <div class="col-auto">
+                    <button type="button" class="btn btn-outline-secondary bi bi-arrow-counterclockwise" @onclick="Restablecer"> Restablecer</button>
+                </div>
+
+                <div class="col text-end">
+                    <button type="button" class="btn btn-outline-primary ms-2" @onclick="MostrarPantallaCrear">Crear</button>
+                </div>
+            </div>
+
+            @*Tabla*@ 
+            <div class="text-center mt-3">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Descripción</th>
+                            <th>Complejidad</th>
+                            <th>Editar</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Sistemas != null && Sistemas.Any())
+                        {
+                            @foreach (var item in Sistemas)
+                            {
+                                <tr>
+                                    <td>@item.SistemaId</td>
+                                    <td>@item.Descripcion</td>
+                                    <td>@item.Complejidad</td>
+                                    <td>
+                                        <button class="btn btn-outline-warning bi bi-pencil-square" @onclick="() => MostrarPantallaEditar(item.SistemaId)"></button>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-outline-danger bi bi-trash2" @onclick="()=> Eliminar(item.SistemaId)"></button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5">No se encontraron resultados.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @*Footer*@ 
+        <div class="card-footer">
+            <p><strong>Total de Sistemas: @Sistemas.Count()</strong></p>
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<Sistemas> Sistemas { get; set; } = new List<Sistemas>();
+    private string filtro = "";
+    private string valorFiltro = "";
+
+    private async Task Buscar()
+    {
+        if (string.IsNullOrWhiteSpace(filtro) || string.IsNullOrWhiteSpace(valorFiltro))
+        {
+            // Si no se ha seleccionado un filtro o no hay valor en la búsqueda, mostrar todos los sistemas
+            Sistemas = await sistemasService.Listar(s => true);
+        }
+        else
+        {
+            // Si hay un filtro y valor de búsqueda, filtrar según el criterio
+            if (filtro == "id" && int.TryParse(valorFiltro, out int sistemaId))
+            {
+                Sistemas = await sistemasService.Listar(s => s.SistemaId == sistemaId);
+            }
+            else if (filtro == "descripcion")
+            {
+                Sistemas = await sistemasService.Listar(s => s.Descripcion.ToLower().Contains(valorFiltro.ToLower()));
+            }
+        }
+    }
+
+    private async Task Eliminar(int id)
+    {
+        var eliminado = await sistemasService.Eliminar(id);
+        if (eliminado)
+        {
+            await Buscar(); // Actualizar la lista después de eliminar
+        }
+    }
+
+    private void Restablecer()
+    {
+        filtro = string.Empty;
+        valorFiltro = string.Empty;
+        Sistemas.Clear(); // Limpiar la lista
+    }
+
+    public void MostrarPantallaCrear()
+    {
+        Navigation.NavigateTo("/Sistema/Create");
+    }
+
+    public void MostrarPantallaEditar(int id)
+    {
+        // Redirigir a la página de edición pasando el id
+        Navigation.NavigateTo($"/Sistema/Edit/{id}");
+    }
+}

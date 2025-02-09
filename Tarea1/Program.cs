@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Tarea1.Components;
 using Tarea1.DAL;
 using Tarea1.Services;
+using Microsoft.AspNetCore.Routing.Constraints;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,10 @@ builder.Services.AddScoped<TecnicosService>();
 builder.Services.AddScoped<ClientesService>();
 builder.Services.AddScoped<CiudadesServices>();
 builder.Services.AddScoped<TicketsService>();
+builder.Services.AddScoped<SistemasService>();
+
+
+
 
 var app = builder.Build();
 

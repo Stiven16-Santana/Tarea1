@@ -1,0 +1,100 @@
+﻿@page "/Sistema/Create"
+
+@inject SistemasService sistemasService
+@rendermode InteractiveServer
+
+<PageTitle>Create</PageTitle>
+<EditForm Model="Sistema" OnInvalidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header text-center bg-primary">
+                <h5 class="card-title text-white">Registro de Sistema</h5>
+            </div>
+
+            <div class="card-body ">
+
+                @*SistemaId*@
+                <div class="mb-3">
+                    <label class="form-label"><strong>SistemaId</strong></label>
+                    <InputNumber TValue="int" class="form-control" @bind-Value="Sistema.SistemaId" readonly></InputNumber>
+                </div>
+
+                @*Descripcion*@
+                <div class="mb-3">
+                    <label class=" form-label"><strong>Descripcion</strong></label>
+                    <InputText class="form-control" @bind-Value="Sistema.Descripcion"></InputText>
+                    <ValidationMessage For="(() => Sistema.Descripcion)" />
+                </div>
+
+                @*Complejidad*@
+                <div class="mb-3">
+                    <label class="form-label"><strong>Complejidad</strong></label>
+                    <select class="form-select" @bind="Sistema.Complejidad">
+                        <option value="" disabled selected>Seleccione una opción</option>
+                        <option value="Baja">Baja</option>
+                        <option value="Media">Media</option>
+                        <option value="Alta">Alta</option>
+                    </select>
+                    <ValidationMessage For="(() => Sistema.Complejidad)" />
+                </div>
+
+                @*Footer*@
+                <div class="card-footer text-center nt-2">
+                    <button type="button" @onclick="Nuevo" class="btn btn-outline-primary">Nuevo</button>
+                    <button type="submit" class="btn btn-outline-success">Guardar</button>
+                    <a href="/Tecnicos/Index" class="btn btn-outline-danger"> <span class="bi bi-arrow-left"></span>Retroceder</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public Sistemas Sistema = new();
+
+    [Parameter]
+    public int SistemaId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (SistemaId > 0)
+        {
+            Sistema = await sistemasService.Buscar(SistemaId);
+        }
+        await base.OnInitializedAsync();
+    }
+
+    private async Task Buscar()
+    {
+        var resultado = await sistemasService.Buscar(Sistema.SistemaId);
+        if (resultado != null)
+        {
+            Sistema = resultado;
+        }
+    }
+
+    private void Nuevo()
+    {
+        Sistema = new Sistemas();
+    }
+
+    private async Task Guardar()
+    {
+        if (await sistemasService.Guardar(Sistema))
+        {
+            // Lógica después de guardar
+            Nuevo();  // Limpiar los campos después de guardar
+        }
+    }
+
+    private async Task Eliminar()
+    {
+        if (await sistemasService.Eliminar(Sistema.SistemaId))
+        {
+            Nuevo();
+        }
+    }
+}

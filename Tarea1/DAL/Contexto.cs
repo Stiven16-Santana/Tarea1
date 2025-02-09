@@ -15,6 +15,7 @@ public class Contexto : DbContext
     public DbSet<Ciudades> Ciudades { get; set; }
 
     public DbSet<Tickets> Tickets  { get; set; }
+    public DbSet<Sistemas> Sistemas  { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
